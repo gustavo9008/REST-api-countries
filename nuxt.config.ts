@@ -3,6 +3,10 @@ export default {
   nitro: {
     preset: "vercel-edge",
   },
+  routeRules: {
+    // Homepage pre-rendered at build time
+    "/country/**": { ssr: false },
+  },
   modules: ["@nuxtjs/tailwindcss"],
   tailwindcss: {
     tailwindcss: {

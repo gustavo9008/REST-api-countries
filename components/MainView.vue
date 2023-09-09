@@ -22,20 +22,26 @@
 
 <script setup>
 import Card from "~~/components/Card.vue";
-const props = defineProps({
-  countries: null,
-});
+let countries = useCountries();
+// const countries = ref([]);
 
-const { pending, data: countries } = await useFetch(
-  "https://restcountries.com/v3.1/subregion/North America",
-  { lazy: true }
-);
 // const { pending, data: countries } = await useFetch(
-//   "https://restcountries.com/v3.1/alpha/222",
+//   "https://restcountries.com/v3.1/subregion/North America",
 //   { lazy: true }
 // );
-console.log(pending);
-console.log(countries);
+const { pending, data } = await useFetch(
+  "https://restcountries.com/v3.1/region/asia",
+  { lazy: true, server: false }
+);
+const loading = ref(pending);
+
+watch(loading, (loading, prevLoading) => {
+  console.log(loading);
+  console.log(data);
+  countries = data;
+  localStorage.setItem("countries", JSON.stringify(data));
+  // countries.value = data;
+});
 </script>
 
 <style lang="css" scoped>

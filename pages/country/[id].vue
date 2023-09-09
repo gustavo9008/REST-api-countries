@@ -1,5 +1,5 @@
 <template>
-  <button
+  <!-- <button
     type="button"
     class="px-8 py-3 font-semibold rounded dark:bg-gray-100 dark:text-gray-800"
   >
@@ -17,78 +17,95 @@
     </svg>
 
     Back
-  </button>
-  <div v-if="pending">Loading...</div>
+  </button> -->
+  <!-- <div v-if="loading">Loading...</div> -->
 
-  <div v-else>
+  <div>
     <main
       class="flex flex-col m-auto gap-2 Psm:w-full max-w-7xl max-w-[830px]:items-center p-8 p"
     >
       <section
         class="flex flex-row gap-8 Psm:flex-col max-h-96 Psm:max-h-max justify-between"
       >
-        <picture class="w-full max-w-[650px]">
+        <picture class="w-full max-w-[600px] Psm:place-self-center">
           <img
-            v-bind:src="oneCountry[0].flags.png"
+            v-bind:src="selectedCountry.flags.png"
             alt=""
             class="object-full w-full object-center dark:bg-gray-500"
           />
         </picture>
-        <aside class="max-w-[500px]">
-          <h1 class="text-2xl font-bold tracking-wide">
-            {{ oneCountry[0].name.common }}
+        <aside class="w-[500px] Psm:w-full flex flex-col Psm:flex-none">
+          <h1
+            class="w-[400px] Psm:w-full place-self-center Psm:place-self-start text-2xl font-bold tracking-wide"
+          >
+            {{ selectedCountry.name.common }}
           </h1>
 
-          <div class="flex flex-wrap gap-4">
+          <div class="flex gap-8 flex-col justify-center">
             <!-- info split section -->
-            <div class="flex">
+            <div
+              class="flex Psm:flex-col gap-4 Psm:w-full w-[400px] place-self-center Psm:place-self-start"
+            >
               <div>
-                <span id="info" class="">
+                <span class="info">
                   Native Name:
-                  <!-- {{ Object.keys(oneCountry[0].name.nativeName[0]) }}</span -->
+                  <!-- {{ Object.keys(selectedCountry.name.nativeName[0]) }}</span -->
                   {{
-                    oneCountry[0].name.nativeName[
-                      Object.keys(oneCountry[0].name.nativeName)[0]
+                    selectedCountry.name.nativeName[
+                      Object.keys(selectedCountry.name.nativeName)[0]
                     ].official
                   }}</span
                 >
-                <span id="info"
-                  >Population: {{ oneCountry[0].population }}</span
+                <span class="info"
+                  >Population: {{ selectedCountry.population }}</span
                 >
-                <span id="info"
+                <span class="info"
                   >Region:
-                  <span class="detail"> {{ oneCountry[0].region }}</span></span
+                  <span class="detail">
+                    {{ selectedCountry.region }}</span
+                  ></span
                 >
-                <span id="info">Sub Region: {{ oneCountry[0].subregion }}</span>
-                <span id="info">Capital: {{ oneCountry[0].capital[0] }}</span>
+                <span class="info"
+                  >Sub Region: {{ selectedCountry.subregion }}</span
+                >
+                <span class="info"
+                  >Capital:
+                  {{
+                    selectedCountry?.capital
+                      ? selectedCountry.capital[0]
+                      : "no capital"
+                  }}</span
+                >
               </div>
 
               <div>
-                <span id="info"
-                  >Top Level Domain: {{ oneCountry[0].tld[0] }}</span
+                <span class="info"
+                  >Top Level Domain: {{ selectedCountry.tld[0] }}</span
                 >
-                <span id="info"
+                <span class="info"
                   >Currencies:
                   {{
-                    oneCountry[0].currencies[
-                      Object.keys(oneCountry[0].currencies)[0]
+                    selectedCountry.currencies[
+                      Object.keys(selectedCountry.currencies)[0]
                     ].name
                   }}</span
                 >
-                <span id="info"
+                <span class="info"
                   >Languages:
                   {{
-                    oneCountry[0].languages[
-                      Object.keys(oneCountry[0].languages)[0]
+                    selectedCountry.languages[
+                      Object.keys(selectedCountry.languages)[0]
                     ]
                   }}</span
                 >
               </div>
             </div>
 
-            <div class="gap-2">
-              <h1>Border Countries:</h1>
-              <li class="inline" v-for="border in oneCountry[0].borders">
+            <div
+              class="gap-2 Psm:w-full w-[400px] Psm- place-self-center Psm:place-self-start"
+            >
+              <span class="info">Border Countries:</span>
+              <li class="inline" v-for="border in selectedCountry.borders">
                 {{ border + " " }}
                 <!-- {{ new Intl.DisplayNames(['en-US'], {type: 'region', fallback: "code"}).of("CAN") }} -->
               </li>
@@ -98,74 +115,176 @@
 
         <!-- <div>hello from {{ oneCountry }}</div> -->
       </section>
+      <aside class="pt-12 w-full max-w-[1200px]">
+        <article
+          class="flex flex-col Psm:max-w-full max-w-[400px] place-self-center Psm:place-self-start"
+        >
+          <p v-if="!wikiDataSum">{{ wikiDataSum }} Loading...</p>
 
-      <article class="flex flex-col">
-        <p v-if="!wikiDataSum">{{ wikiDataSum }} Loading...</p>
-
-        <section v-else class="w-full">
-          <span class="block w-fit">{{ wikiDataSum.value.extract }}</span>
-        </section>
-        <!-- <section class="w-[400px]">
+          <section v-else class="w-full">
+            <span class="block w-fit">{{ wikiDataSum.value.extract }}</span>
+          </section>
+          <!-- <section class="w-[400px]">
           <img
-            v-bind:src="oneCountry[0].flags.svg"
+            v-bind:src="selectedCountry.flags.svg"
             alt=""
             class="object-cover dark:bg-gray-500"
           />
           placeholder for maps
         </section> -->
-      </article>
+        </article>
+        <!-- wikiData -->
+
+        <section class="w-full Psm:min-w-full h-[600px] max-w-[]">
+          <div id="map"></div>
+        </section>
+      </aside>
     </main>
   </div>
 </template>
 
 <script setup>
-const wikiDataSum = ref(false);
-const route = useRoute();
-console.log(route.params);
-const { pending, data: oneCountry } = await useFetch(
-  `https://restcountries.com/v3.1/alpha/${route.query.id}`,
-  { lazy: true, server: false }
-);
-const loading = ref(pending);
-watch(loading, (loading, prevLoad) => {
-  // console.log(prevLoad);
-  // console.log(loading);
-  // console.log(oneCountry._rawValue[0].name.common);
-  // console.log(new Intl.DisplayNames(['en-US'], {type: 'region', fallback: "code"}).of("CAN"))
+import { world } from "../../public/countries-geo.js";
+// import { ref, onMounted } from "vue";
+let localStorageCountry = JSON.parse(localStorage.getItem("selectedCountry"));
 
+const wikiDataSum = ref(false);
+let selectedCountry = ref({});
+const route = useRoute();
+let loading = ref(false);
+
+var loaded = false;
+
+console.log(world.features);
+let foundCoord = world.features.find(
+  (el) => el.id === localStorageCountry.cca3
+);
+// func checks if country selected is match to id in search query , if match it grabs data from local storage
+async function getCountryStorage() {
+  console.log(selectedCountry);
+  // let localStorageCountry = JSON.parse(localStorage.getItem("selectedCountry"));
+  if (localStorageCountry.ccn3 === route.query.id) {
+    console.log(route.query.id);
+    selectedCountry = localStorageCountry;
+    console.log(selectedCountry);
+    await getWikiData();
+  } else {
+    await getCountryApi();
+  }
+}
+// func gets country from api if local storage id does not match to query id
+async function getCountryApi() {
+  console.log(route.params);
+
+  const { pending, data: oneCountry } = await useFetch(
+    `https://restcountries.com/v3.1/alpha/${route.query.id}`,
+    { lazy: false, server: false }
+  );
+  loading = pending;
+  console.log(oneCountry);
+  selectedCountry = oneCountry._rawValue[0];
+
+  await getWikiData();
+}
+
+async function getWikiData() {
+  console.log("getWikiData");
+  console.log(selectedCountry.name.common);
   const { pending, data: wikiData } = useFetch(
-    `https://en.wikipedia.org/api/rest_v1/page/summary/${oneCountry._rawValue[0].name.common}`,
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${selectedCountry.name.common}`,
     { lazy: true, server: false }
   );
   watch(pending, (pending, prevPending) => {
-    console.log(pending);
     wikiDataSum.value = wikiData;
   });
-  // wikiDataSum.value = wikiData;
-  console.log(wikiData);
+}
+localStorage.getItem("selectedCountry") != false &&
+  (await getCountryStorage(), console.log("getCountryStoragerunnin"));
+localStorage.getItem("selectedCountry") === false && (await getCountryApi());
+
+async function getMapScript() {
+  console.log("getting map");
+
+  const leafCssImport = document.createElement("link");
+  leafCssImport.setAttribute("rel", "stylesheet");
+  leafCssImport.setAttribute("crossorigin", "");
+  leafCssImport.setAttribute(
+    "href",
+    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  );
+  leafCssImport.setAttribute(
+    "integrity",
+    "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  );
+  document.head.appendChild(leafCssImport);
+  // import mapim from "../../scripts/leaflet/dist/leaflet"
+  const mapImport = document.createElement("script");
+  mapImport.setAttribute("async", "true");
+  mapImport.setAttribute("crossorigin", "");
+  mapImport.setAttribute(
+    "integrity",
+    "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  );
+  mapImport.setAttribute(
+    "src",
+    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  );
+  mapImport.setAttribute("onload", "loaded=true");
+  loading.value = true;
+  document.head.appendChild(mapImport);
+
+  console.log(loaded);
+}
+
+async function addMapToDom() {
+  console.log(loaded);
+  console.log(foundCoord);
+
+  console.log("adding map to dom");
+  var map = L.map("map").setView(
+    [localStorageCountry.latlng[0], localStorageCountry.latlng[1]],
+    5
+  );
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+  L.geoJson(foundCoord).addTo(map);
+
+  L.marker([
+    localStorageCountry.capitalInfo.latlng[0],
+    localStorageCountry.capitalInfo.latlng[1],
+  ])
+    .addTo(map)
+    .bindPopup("A pretty CSS3 popup.<br> Easily customizable.")
+    .openPopup();
+  console.log(map);
+}
+
+onNuxtReady(async () => {
+  await getMapScript();
 });
 
-// if ((await pending._value) === false) {
-//   console.log("pending is false");
-//   console.log(await pending);
+watch(loading, (loading, prevLoading) => {
+  console.log(loading);
+  setTimeout(() => {
+    addMapToDom();
+  }, 3000);
+});
 
-//   console.log(
-//     oneCountry[0].name.nativeName[Object.keys(oneCountry[0].name.nativeName)[0]]
-//       .official
-//   );
-//   const { pending, data: oneCountry } = await useFetch(
-//     `https://en.wikipedia.org/api/rest_v1/page/summary//${
-//       ooneCountry[0].name.nativeName[
-//         Object.keys(oneCountry[0].name.nativeName)[0]
-//       ].official
-//     }`,
-//     { lazy: true, server: false }
-//   );
-// }
+// onNuxtReady(async () => {
+//   console.log(loaded);
+//   await addMapToDom();
+// });
 </script>
 
 <style lang="css" scoped>
-#info {
+#map {
+  width: 100%;
+  height: 100%;
+}
+.info {
   display: block;
   font-weight: 600;
 }

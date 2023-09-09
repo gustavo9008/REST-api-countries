@@ -1,5 +1,8 @@
 <template>
-  <div class="card rounded-md shadow-md dark:bg-gray-900 dark:text-gray-100">
+  <div
+    @click="routePush"
+    class="card rounded-md shadow-md dark:bg-gray-900 dark:text-gray-100"
+  >
     <figure class="aspect-w-16 aspect-h-9">
       <img
         v-bind:src="country.flags.svg"
@@ -34,7 +37,10 @@
           Region: <span class="infoCardText"> {{ country.region }} </span>
         </h4>
         <h4>
-          Capital: <span class="infoCardText"> {{ country.capital[0] }} </span>
+          Capital:
+          <span class="infoCardText">
+            {{ country?.capital ? country.capital[0] : "no capital" }}
+          </span>
         </h4>
       </div>
     </div>
@@ -42,9 +48,43 @@
 </template>
 
 <script setup>
-defineProps(["country"]);
+const props = defineProps(["country"]);
+const router = useRouter();
+
+const countryData = ref(props.country);
+async function routePush(event, error) {
+  // console.log("hello");
+  // console.log(props.country);
+  // console.log(countryData._rawValue);
+  let linkCountry = null;
+  async function saveCountryToLocalStorage() {
+    localStorage.setItem(
+      "selectedCountry",
+      JSON.stringify(countryData._rawValue)
+    );
+    linkCountry =
+      `/country/` +
+      countryData._rawValue.name.official
+        .replace(/\s+/g, "-")
+        .toLowerCase()
+        .concat(`?id=${countryData._rawValue.ccn3}`);
+  }
+  await saveCountryToLocalStorage();
+  // console.log(linkCountry);
+  // console.log(
+  //   `/country/` +
+  //     countryData._rawValue.name.official
+  //       .replace(/\s+/g, "-")
+  //       .toLowerCase()
+  //       .concat(`?id=${countryData._rawValue.ccn3}`)
+  // );
+  if (linkCountry != null) {
+    console.log(linkCountry);
+    await navigateTo(linkCountry);
+  }
+}
 // const linkCountryName = await country.name.official;
-// console.log(country);
+// console.log(props);
 // console.log(country);
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-gray-100 h-[fit-content]">
     <Header />
 
     <!-- <NuxtWelcome /> -->
@@ -9,4 +9,6 @@
 
 <script setup>
 import Header from "./components/globalUI/Header.vue";
+
+// const countryData = useState('countryData')
 </script>
