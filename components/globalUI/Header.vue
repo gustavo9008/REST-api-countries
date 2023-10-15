@@ -1,16 +1,21 @@
 <template>
-  <header class="w-full bg-slate-700 h-20">
-    <nav class="w-full m-auto flex justify-between h-full">
-      <h1 class="text-gray-100 font-bold self-center text-2xl">
-        Where in the world?
+  <header
+    class="w-full shadow-md h-20"
+    :class="countries.darkTheme ? 'dark:bg-country-darkBlue' : ''"
+  >
+    <nav class="max-w-screen-xl m-auto flex justify-between h-full px-3">
+      <h1 class="font-bold self-center text-xl">
+        <NuxtLink :href="`/`"> Where in the world?</NuxtLink>
       </h1>
 
-      <aside class="self-center">
-        <h2 class="text-medium text-gray-200">Dark Mode</h2>
+      <aside
+        @click="countries.darkTheme = !countries.darkTheme"
+        class="cursor-pointer self-center flex gap-2"
+      >
         <span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
+            fill="white"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
@@ -23,11 +28,16 @@
             />
           </svg>
         </span>
+        <h2 class="text-medium">
+          {{ countries.darkTheme ? "Light" : "Dark" }} Mode
+        </h2>
       </aside>
     </nav>
   </header>
 </template>
 
-<script></script>
+<script>
+import { countries } from "~/composables/store";
+</script>
 
 <style lang="css" scoped></style>

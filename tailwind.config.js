@@ -1,4 +1,5 @@
 import plugin from "tailwindcss/plugin";
+const colors = require('tailwindcss/colors')
 
 export const mode = "jit";
 export const content = [
@@ -15,6 +16,7 @@ export const content = [
   `/app.config.{js,ts}`
 ];
 export const theme = {
+  darkMode: "class",
   maxHeight: {
     "1/2": "40rem",
   },
@@ -27,12 +29,23 @@ export const theme = {
     xl: "1280px",
     "2xl": "1536px",
   },
-  extend: {
-    backgroundImage: {
-      'gradientDark': `linear-gradient( 94.3deg, rgb(30, 31, 39) 10.9%, rgb(38, 38, 40) 87.1% );`,
-      'gradientLight': `linear-gradient( 94.3deg,  rgb(226, 226, 226) 10.9%, rgb(255, 255, 255) 87.1% );`
+  colors: {
+    transparent: 'transparent',
+    current: 'currentColor',
+    black: colors.black,
+    white: colors.white,
+    gray: colors.gray,
+    slate: colors.slate,
+    blue: colors.blue,
+    country: {
+      darkBlue: "hsl(209, 23%, 22%)",
+      veryDarkBlue: "hsl(207, 26%, 17%)",
+      veryDarkBlueText: "hsl(200, 15%, 8%)",
+      darkGray: "hsl(0, 0%, 52%)",
+      veryLightGray: "hsl(0, 0%, 98%)",
+      white: "hsl(0,0%,100%)"
     }
-  },
+  }
 };
 export const variants = {
   extend: {},

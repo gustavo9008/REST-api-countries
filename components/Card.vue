@@ -1,13 +1,14 @@
 <template>
   <div
     @click="routePush"
-    class="card rounded-md shadow-md dark:bg-gray-900 dark:text-gray-100"
+    class="card rounded-md shadow-lg"
+    :class="countries.darkTheme ? 'dark:bg-country-darkBlue' : ''"
   >
     <figure class="aspect-w-16 aspect-h-9">
       <img
         v-bind:src="country.flags.svg"
         alt=""
-        class="object-cover object-center dark:bg-gray-500"
+        class="object-cover object-center rounded-t-md dark:bg-gray-500"
       />
     </figure>
 
@@ -52,10 +53,9 @@ const props = defineProps(["country"]);
 const router = useRouter();
 
 const countryData = ref(props.country);
+
+//===== func pushes selected country into localstorage for data load in id route =====
 async function routePush(event, error) {
-  // console.log("hello");
-  // console.log(props.country);
-  // console.log(countryData._rawValue);
   let linkCountry = null;
   async function saveCountryToLocalStorage() {
     localStorage.setItem(
@@ -64,28 +64,17 @@ async function routePush(event, error) {
     );
     linkCountry =
       `/country/` +
-      countryData._rawValue.name.official
+      countryData._rawValue.name.common
         .replace(/\s+/g, "-")
         .toLowerCase()
         .concat(`?id=${countryData._rawValue.ccn3}`);
   }
   await saveCountryToLocalStorage();
-  // console.log(linkCountry);
-  // console.log(
-  //   `/country/` +
-  //     countryData._rawValue.name.official
-  //       .replace(/\s+/g, "-")
-  //       .toLowerCase()
-  //       .concat(`?id=${countryData._rawValue.ccn3}`)
-  // );
+
   if (linkCountry != null) {
-    console.log(linkCountry);
     await navigateTo(linkCountry);
   }
 }
-// const linkCountryName = await country.name.official;
-// console.log(props);
-// console.log(country);
 </script>
 
 <style lang="css" scoped>
@@ -94,14 +83,17 @@ async function routePush(event, error) {
   min-height: 350px;
   max-height: 450px;
 }
+
 h4 {
   font-size: small;
   font-weight: 400;
 }
+
 .infoCardText {
   font-weight: 100;
   letter-spacing: 1px;
 }
+
 @media (max-width: 610px) {
   .card {
     width: clamp(320px, 30vw, 400px);
