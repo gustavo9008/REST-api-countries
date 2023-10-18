@@ -7,7 +7,7 @@
     <div v-else id="gridCardContainer">
       <Card
         v-for="(country, index) in countries.loadedCountries"
-        :key="index"
+        :key="country.ccn3"
         :country="country"
       />
       <!-- <div v-for="country in data">
