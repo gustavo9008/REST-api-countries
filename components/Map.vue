@@ -7,10 +7,6 @@
 </template>
 
 <script setup>
-// import { onBeforeUnmount } from "nuxt/dist/app/compat/capi";
-// import { latLng } from "~/assets/leaflet/dist/leaflet-src.esm";
-// import { world } from "../../public/countries-geo.js";
-// import { world2 } from "../../public/isoCodeJson.js";
 var map = reactive({});
 const props = defineProps([
   "foundCoord",
@@ -22,9 +18,8 @@ const props = defineProps([
 const emit = defineEmits(["deleteMap"]);
 let loading = ref(props.loading);
 const coordinates = ref(props.foundCoord);
-const latlng = reactive(props.latLng.latlng);
-// const linkClick = ref(props.clickLink);
 
+//===== map is loaded when pages is fully loaded on client side, func manual adds css and javascript file into page =====
 async function getMapScript() {
   // await findCoors();
   const leafCssImport = document.createElement("link");
@@ -55,7 +50,7 @@ async function getMapScript() {
   loading.value = true;
   document.head.appendChild(mapImport);
 }
-
+//===== func adds map to page after map css and javascipt file are added to page =====
 async function addMapToDom() {
   map = L.map("map1").setView(
     [props.latLng.latlng[0], props.latLng.latlng[1]],
@@ -76,16 +71,16 @@ async function addMapToDom() {
   //   .bindPopup(`Capital of`)
   //   .openPopup();
 }
-
+//===== removes maps from page , is triggered fom either the back btn or user clicks border county =====
 async function removeMap() {
   map.remove();
 }
-
+//===== after nuxt loads page it logic add add func to remove map to ref data and triggers func to add files to page =====
 onNuxtReady(async () => {
   props.clickLink.value = removeMap;
   await getMapScript();
 });
-
+//===== delay adding map to page so no error would occured =====
 watch(loading, (loading, prevLoading) => {
   setTimeout(() => {
     addMapToDom();

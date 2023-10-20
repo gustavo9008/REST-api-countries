@@ -62,9 +62,11 @@
                   Native Name:
                   <span class="detail">
                     {{
-                      selectedCountry.name.nativeName[
-                        Object.keys(selectedCountry.name.nativeName)[0]
-                      ].official
+                      selectedCountry.name.hasOwnProperty("nativeName")
+                        ? selectedCountry?.name?.nativeName[
+                            Object.keys(selectedCountry.name.nativeName)[0]
+                          ]?.official
+                        : ""
                     }}
                   </span>
                 </span>
@@ -109,36 +111,41 @@
                   >Currencies:
                   <span class="detail">
                     {{
-                      selectedCountry.currencies[
-                        Object.keys(selectedCountry.currencies)[0]
-                      ].name
+                      selectedCountry.hasOwnProperty("currencies")
+                        ? selectedCountry.currencies[
+                            Object.keys(selectedCountry.currencies)[0]
+                          ].name
+                        : ""
                     }}
                   </span>
                 </span>
                 <span class="info lang"
                   >Languages:
-                  <span
-                    v-for="(lang, index) in Object.values(
-                      selectedCountry.languages
-                    )"
-                    class="detail"
-                  >
-                    <!-- {{
+                  <span v-if="selectedCountry.hasOwnProperty('languages')">
+                    <span
+                      v-for="(lang, index) in Object.values(
+                        selectedCountry.languages
+                      )"
+                      class="detail"
+                    >
+                      <!-- {{
                       selectedCountry.languages[
                         Object.keys(selectedCountry.languages)[0]
                       ]
                     }} -->
 
-                    <span
-                      v-if="
-                        index ===
-                        Object.values(selectedCountry.languages).length - 1
-                      "
-                    >
-                      {{ lang }}
+                      <span
+                        v-if="
+                          index ===
+                          Object.values(selectedCountry.languages).length - 1
+                        "
+                      >
+                        {{ lang }}
+                      </span>
+                      <span v-else>{{ lang }}, </span>
                     </span>
-                    <span v-else>{{ lang }}, </span>
                   </span>
+                  <span v-else> no official language </span>
                 </span>
               </div>
             </div>
@@ -155,23 +162,10 @@
                 class="inline mb-4"
                 v-for="border in borderCountries"
               >
-                <!-- prettier-ignore-attribute (external) -->
-                <!-- <NuxtLink
-                  external
-                  class="bg-white drop-shadow-md hover:bg-gray-50 text-black py-2 px-4 rounded-sm"
-                  :href="
-                    `/country/` +
-                    border.name
-                      .replace(/\s+/g, '-')
-                      .toLowerCase()
-                      .concat(`?id=${border.alphaID}`)
-                  "
-                  >{{ border.name }}</NuxtLink
-                > -->
                 <button
                   :disabled="btnLinkCountryState.state"
                   @click="
-                    navigateToNewPage(
+                    navigateToBoarderCountry(
                       `/country/` +
                         border.name
                           .replace(/\s+/g, '-')
@@ -233,15 +227,6 @@
               </p>
             </span>
           </section>
-
-          <!-- <section class="w-[400px]">
-          <img
-            v-bind:src="selectedCountry.flags.svg"
-            alt=""
-            class="object-cover dark:bg-gray-500"
-          />
-          placeholder for maps
-        </section> -->
         </article>
         <!-- wikiData -->
 
@@ -264,9 +249,6 @@ import { world } from "../../public/countries-geo.js";
 import { countries } from "~/composables/store";
 import { world2 } from "../../public/isoCodeJson.js";
 
-// import { ref, onMounted } from "vue";
-// let localStorageCountry = JSON.parse(localStorage.getItem("selectedCountry"));
-
 const borderCountries = reactive([]);
 
 const wikiDataSum = ref(false);
@@ -278,11 +260,13 @@ let mapShow = ref(false);
 let clickLink = ref({});
 let foundCoord;
 var btnLinkCountryState = ref({ state: true });
-const navigateToNewPage = async (route) => {
+
+//===== func is to navigate chosen border country  =====
+const navigateToBoarderCountry = async (route) => {
   await clickLink._rawValue.value();
   await navigateTo(route);
 };
-
+//===== func back btn deletes map and then router back is triggered =====
 const backBtn = async () => {
   await clickLink._rawValue.value();
   router.back();
@@ -322,6 +306,7 @@ async function getCountryApi() {
     { lazy: false, server: false }
   );
   loading.value = pending;
+
   if (
     paramName !=
     oneCountry._rawValue[0].name.common.replace(/\s+/g, "-").toLowerCase()
@@ -341,7 +326,7 @@ async function getCountryApi() {
 
   await getWikiData();
 }
-
+//===== func for getting wiki data for chosen country =====
 async function getWikiData() {
   await getBorderCountries(selectedCountry.borders);
   const { pending, data: wikiData } = useFetch(
@@ -357,7 +342,7 @@ async function getWikiData() {
     await findCoors();
   });
 }
-//===== function is to find the coordinate for the map, it searches an array for country =====
+//===== function is to find the coordinate for the map, it searches an array of countries =====
 async function findCoors() {
   foundCoord = world.features.find((el) => el.id === selectedCountry.cca3);
   mapShow.value = true;

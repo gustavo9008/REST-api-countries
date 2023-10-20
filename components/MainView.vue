@@ -5,11 +5,7 @@
     <div v-if="pending">Loading...</div>
 
     <div v-else id="gridCardContainer">
-      <Card
-        v-for="(country, index) in countries.loadedCountries"
-        :key="country.ccn3"
-        :country="country"
-      />
+      <Card v-for="(country, index) in countries.loadedCountries" :key="country.ccn3" :country="country" />
       <!-- <div v-for="country in data">
         <Card country="country" />
         <p>{{ country.name.official }}</p>
@@ -22,26 +18,24 @@
 import { countries } from "../composables/store";
 import Card from "~~/components/Card.vue";
 import Search from "~~/components/globalUI/Search.vue";
-// let countries = useCountries();
-// let props = defineProps(["countries"]);
 
 const countriesRef = ref(countries.loadedCountries);
+
+
+//===== initail start data when first load =====
 const { pending, data, refresh, execute } = await useFetch(
   `https://restcountries.com/v3.1/region/${countries.region}`,
   { lazy: true, server: false }
 );
-// const { pending, data } = await useFetch(
-//   "https://restcountries.com/v3.1/region/asia",
-//   { lazy: true, server: false }
-// );
 const loading = ref(pending);
-
+//===== watch func reacts when loading changes =====
 watch(loading, (loading, prevLoading) => {
   countriesRef.value = data;
   countries.loadedCountries = data;
   localStorage.setItem("countries", JSON.stringify(data));
-  // countries.value = data;
+
 });
+//===== watch func reacts to countries.region data is use to update country region data =====
 watch(
   () => countries.region,
   async (region, prevRegion) => {

@@ -1,32 +1,19 @@
 <template>
-  <div
-    @click="routePush"
-    class="card rounded-md shadow-lg"
-    :class="countries.darkTheme ? 'dark:bg-country-darkBlue' : ''"
-  >
+  <div @click="routePush" class="card rounded-md shadow-lg"
+    :class="countries.darkTheme ? 'dark:bg-country-darkBlue' : ''">
     <figure class="aspect-w-16 aspect-h-9">
-      <img
-        v-bind:src="country.flags.svg"
-        alt=""
-        class="object-cover object-center rounded-t-md dark:bg-gray-500"
-      />
+      <img v-bind:src="country.flags.svg" alt="" class="object-cover object-center rounded-t-md dark:bg-gray-500" />
     </figure>
 
     <div class="px-6 py-4">
       <div class="space-y-2">
         <h2 class="text-lg font-medium">
-          <NuxtLink
-            :href="
-              `country/` +
-              country.name.official
-                .replace(/\s+/g, '-')
-                .toLowerCase()
-                .concat(`?id=${country.ccn3}`)
-            "
-            >{{ country.name.official }}</NuxtLink
-          >
-
-          <!-- {{ country.name.official }} -->
+          <NuxtLink :href="`country/` +
+            country.name.official
+              .replace(/\s+/g, '-')
+              .toLowerCase()
+              .concat(`?id=${country.ccn3}`)
+            ">{{ country.name.official }}</NuxtLink>
         </h2>
         <h4>
           Population:
@@ -50,7 +37,6 @@
 
 <script setup>
 const props = defineProps(["country"]);
-const router = useRouter();
 
 const countryData = ref(props.country);
 
