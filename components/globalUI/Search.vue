@@ -197,7 +197,7 @@ function changeRegion(region) {
 //===== func pushes selected country into localstorage for data load in id route =====
 async function routePush(indexNum, country) {
   let selectedCountry = search._rawValue.searchResults._rawValue[indexNum];
-  console.log(selectedCountry);
+
   let linkCountry = null;
   async function saveCountryToLocalStorage() {
     localStorage.setItem("selectedCountry", JSON.stringify(selectedCountry));
