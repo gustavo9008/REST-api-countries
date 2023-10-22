@@ -52,10 +52,28 @@ async function getMapScript() {
 }
 //===== func adds map to page after map css and javascipt file are added to page =====
 async function addMapToDom() {
-  map = L.map("map1").setView(
-    [props.latLng.latlng[0], props.latLng.latlng[1]],
-    5
-  );
+  if ("latlng" in props.latLng.capitalInfo) {
+    map = L.map("map1").setView(
+      [props.latLng.capitalInfo.latlng[0], props.latLng.capitalInfo.latlng[1]],
+      5
+    );
+
+    L.marker([
+      props.latLng.capitalInfo.latlng[0],
+      props.latLng.capitalInfo.latlng[1],
+    ])
+      .addTo(map)
+      .bindPopup(`Capital: ${props.latLng.capital[0]}`)
+      .openPopup();
+  } else {
+    map = L.map("map1").setView(
+      [props.latLng.latlng[0], props.latLng.latlng[1]],
+      5
+    );
+
+    L.marker([props.latLng.latlng[0], props.latLng.latlng[1]]).addTo(map);
+  }
+
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     {
@@ -66,10 +84,6 @@ async function addMapToDom() {
   ).addTo(map);
   L.geoJson(coordinates._rawValue).addTo(map);
   props.btnLinkCountryState.state = false;
-  // marker([selectedCountry.latlng[0], selectedCountry.latlng[1]]);
-  //   .addTo(map)
-  //   .bindPopup(`Capital of`)
-  //   .openPopup();
 }
 //===== removes maps from page , is triggered fom either the back btn or user clicks border county =====
 async function removeMap() {

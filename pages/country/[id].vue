@@ -338,6 +338,7 @@ async function getWikiData() {
 
   watch(pending, async (pending, prevPending) => {
     wikiDataSum.value = wikiData;
+    // console.log(wikiData);
     // await getMapScript();
     await findCoors();
   });
